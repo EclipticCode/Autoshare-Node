@@ -99,10 +99,25 @@ const handleCancelBooking = async (apiReq , apiRes) => {
    apiRes.send("Cancelled Failed")
 }
 
+// booked Slots 
+// const handleBookedSlots = async (apiReq , apiRes) => {
+   
+//     const { id , selectedEndDate } = apiReq.params;
+
+//     const dbResponse = await BookingModel.find({
+//         carId : id , endDate : selectedEndDate ,
+//     });
+//     if(dbResponse?.length){
+//         apiRes.send(dbResponse)
+//     }
+// }
+
+
 module.exports = {
   handleLogin,
   handleRegistration,
   handleCreateBooking,
   handleMyBookings ,
-  handleCancelBooking
+  handleCancelBooking ,
+//   handleBookedSlots
 };
