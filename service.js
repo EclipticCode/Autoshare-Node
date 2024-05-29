@@ -2,26 +2,10 @@ const {  RegistrationModel , BookingModel } = require("./schema");
 const { ObjectId } = require('mongodb')
 
 
-// Login
-const handleLogin =  async (apiReq, apiRes) => {
-
-    const {username , password} = apiReq.params
-    
-    const dbResponse = await RegistrationModel.findOne({
-        username : username ,
-        password : password
-    })
-   if(dbResponse?._id){
-    apiRes.send(dbResponse.username)
-    return
-   }
-   apiRes.send("Login failed")
-};
-
 // Registration
 const handleRegistration = async (apiReq, apiRes) => {
  
-const { username , password , phoneNumber , emailAddress } = apiReq.body.values;
+const { username , password , phoneNumber , emailAddress } = apiReq.body;
 
 if(
     username?.length && 
@@ -42,6 +26,24 @@ if(
 }
 apiRes.send("Fill in all fields")
 };
+
+
+// Login
+const handleLogin =  async (apiReq, apiRes) => {
+
+    const {username , password} = apiReq.params
+    
+    const dbResponse = await RegistrationModel.findOne({
+        username : username ,
+        password : password
+    })
+   if(dbResponse?._id){
+    apiRes.send(dbResponse.username)
+    return
+   }
+   apiRes.send("Login failed")
+};
+
 
 // Booking
 const handleCreateBooking = async (apiReq , apiRes) => {
@@ -96,7 +98,7 @@ const handleCancelBooking = async (apiReq , apiRes) => {
         return;
     }
    }
-   apiRes.send("Cancelled Failed")
+   apiRes.send("Cancellation Failed")
 }
 
 // booked Slots 
