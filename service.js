@@ -1,31 +1,32 @@
 const {  RegistrationModel , BookingModel } = require("./schema");
 const { ObjectId } = require('mongodb')
-
+const bcrypt = require ('bcryptjs')
 
 // Registration
 const handleRegistration = async (apiReq, apiRes) => {
- 
-const { username , password , phoneNumber , emailAddress } = apiReq.body;
-
-if(
-    username?.length && 
-    password?.length && 
-    phoneNumber?.length &&  
-    emailAddress?.length 
-) {
-   const dbResponse = await RegistrationModel.create({
-        username : username ,
-        password : password ,
-        phoneNumber : phoneNumber , 
-        emailAddress : emailAddress
-    })
-    if(dbResponse){
-        apiRes.send(dbResponse)
-        return;
+try {
+    const { username , password ,confirmPassword, phoneNumber , emailAddress } = apiReq.body.values;
+    
+    // if(password !== confirmPassword){
+    //     return apiRes.status(400).json({message : "Passwords do not match"})
+    //     alert("Passwords do not match")
+    // }
+    if( username &&  password && phoneNumber && emailAddress) {
+       const hashedPassword = await bcrypt.hash(password , 0)
+       const dbResponse = await RegistrationModel.create({
+            username : username ,
+            password : hashedPassword ,
+            phoneNumber : phoneNumber , 
+            emailAddress : emailAddress
+        })
+        apiRes.json({message:"Data added"})
+     }
+    }
+    catch(error){
+        console.error("Error during registration:" , error);
+        apiRes.status(500).send("Internal server error")
     }
 }
-apiRes.send("Fill in all fields")
-};
 
 
 // Login

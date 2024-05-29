@@ -10,6 +10,19 @@ const {handleLogin , handleRegistration , handleCreateBooking , handleMyBookings
 app.use(cors());
 app.use(bodyParser.json())
 
+const auth = (req, res, next) => {
+    if(req.headers.auth){
+        next();
+    } else
+   { 
+    res.sendStatus(400);
+    res.send("API error");
+}
+};
+app.use(auth);
+
+
+
 connectDb();
 
 
