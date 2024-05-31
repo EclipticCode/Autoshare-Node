@@ -13,6 +13,7 @@ app.use(cors());
 app.use(bodyParser.json())
 connectDb();
 
+const jwtUserkey = process.env.JWT_USERKEY;
 
 app.get('/', (req,res)=> {
     if(mongoose.connection.readyState === 1) {
@@ -44,7 +45,7 @@ const auth = (req, res, next) => {
     if(req.headers.auth){
       const userToken = req.headers.auth;
      try{
-        const tokenDecoded = jwt.verify(userToken , "userkey")
+        const tokenDecoded = jwt.verify(userToken , jwtUserkey)
         const username = tokenDecoded.data;
         verifyUser(username)
         .then(response =>{ 

@@ -4,6 +4,8 @@ const bcrypt = require ('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 
+const jwtUserkey = process.env.JWT_USERKEY;
+
 // Registration
 const handleRegistration = async (apiReq, apiRes) => {
 try {
@@ -45,7 +47,7 @@ const handleLogin =  async (apiReq, apiRes) => {
         password : password
     })
    if(dbResponse?._id){
-    const token = jwt.sign({data : username } , "userkey");
+    const token = jwt.sign({data : username } , jwtUserkey);
     apiRes.json({username : dbResponse.username , token : token})
     return
    }
