@@ -4,12 +4,15 @@ const bodyParser = require('body-parser');
 const app = express();
 require('dotenv').config();
 const jwt = require('jsonwebtoken')
+const {  RegistrationModel } = require("./schema");
 
 const {connectDb , mongoose} = require('./db')
 const {handleLogin , handleRegistration , handleCreateBooking , handleMyBookings , handleCancelBooking } = require('./service')
 
 app.use(cors());
 app.use(bodyParser.json())
+connectDb();
+
 
 app.get('/', (req,res)=> {
     if(mongoose.connection.readyState === 1) {
@@ -19,25 +22,7 @@ app.get('/', (req,res)=> {
     res.send("Server working fine")
  })
 
-// const token = jwt.sign({data : "Janani"} , "mykey");
-// const decodedValue = jwt.verify(token , "mykey")
-// console.log(token , "token")
-// console.log(decodedValue , "decodedValue")
-
-const auth = (req, res, next) => {
-    console.log(req.headers.auth)
-    if(req.headers.auth){
-      next();
-    } else
-   { 
-    res.status(400).send("API error");
-    return;
-}
-};
-app.use(auth);
-
-connectDb();
-
+ 
 app.get('/login/:username/:password' , (apiReq,apiRes) => {
     handleLogin(apiReq,apiRes);
 })
@@ -46,22 +31,55 @@ app.post('/registration' , (apiReq , apiRes) => {
     handleRegistration(apiReq , apiRes)
 })
 
-app.post('/createBooking',  (apiReq , apiRes) => {
+
+const verifyUser = async (username) => {
+   const dbResponse = await RegistrationModel.findOne({username})
+   if(dbResponse._id){
+    return true;
+   }
+   return false;
+}
+
+const auth = (req, res, next) => {
+    if(req.headers.auth){
+      const userToken = req.headers.auth;
+     try{
+        const tokenDecoded = jwt.verify(userToken , "userkey")
+        const username = tokenDecoded.data;
+        verifyUser(username)
+        .then(response =>{ 
+            if(response){
+                next();
+            }
+        else{
+            res.send(400)
+        }}
+        )
+     } catch(error){
+        res.status(400).send("Invalid token");
+     }
+    } else {  
+    res.status(400).send("API error");
+    return;
+}
+};
+
+
+app.post('/createBooking', auth , (apiReq , apiRes) => {
     handleCreateBooking(apiReq , apiRes)
 })
 
-app.get('/mybookings/:username',  (apiReq , apiRes) => {
+app.get('/mybookings/:username', auth , (apiReq , apiRes) => {
     handleMyBookings(apiReq , apiRes)
 })
 
-app.put('/cancelBooking/:username/:bookingId' , (apiReq , apiRes) => {
+app.put('/cancelBooking/:username/:bookingId' , auth , (apiReq , apiRes) => {
     handleCancelBooking(apiReq , apiRes)
 })
 
 // app.get('/bookedSlots/:id/:selectedEndDate' , (apiReq , apiRes) => {
 //     handleBookedSlots(apiReq , apiRes)
 // })
-
 
 
 app.listen(4000 , ()=> {

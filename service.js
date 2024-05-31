@@ -1,6 +1,8 @@
 const {  RegistrationModel , BookingModel } = require("./schema");
 const { ObjectId } = require('mongodb')
 const bcrypt = require ('bcryptjs')
+const jwt = require('jsonwebtoken')
+
 
 // Registration
 const handleRegistration = async (apiReq, apiRes) => {
@@ -29,6 +31,10 @@ try {
 }
 
 
+
+// const decodedValue = jwt.verify(token , "mykey")
+
+
 // Login
 const handleLogin =  async (apiReq, apiRes) => {
 
@@ -39,7 +45,8 @@ const handleLogin =  async (apiReq, apiRes) => {
         password : password
     })
    if(dbResponse?._id){
-    apiRes.send(dbResponse.username)
+    const token = jwt.sign({data : username } , "userkey");
+    apiRes.json({username : dbResponse.username , token : token})
     return
    }
    apiRes.send("Login failed")
