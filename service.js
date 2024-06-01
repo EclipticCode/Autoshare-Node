@@ -48,7 +48,8 @@ try {
 
 const handleLogin =  async (apiReq, apiRes) => {
 
-    const {username , password} = apiReq.params
+    try{
+        const {username , password} = apiReq.params
 
     const dbResponse = await RegistrationModel.findOne({
         username : username 
@@ -60,7 +61,11 @@ const handleLogin =  async (apiReq, apiRes) => {
     apiRes.json({username : dbResponse.username , token : token})
     return
    }}
-   apiRes.send("Login failed")
+    }
+    catch(error){
+        console.error("Error during login")
+        apiRes.send("Login failed")
+    }
 };
 
 
