@@ -9,12 +9,7 @@ const jwtUserkey = process.env.JWT_USERKEY;
 // Registration
 const handleRegistration = async (apiReq, apiRes) => {
 try {
-    const { username , password ,confirmPassword, phoneNumber , emailAddress } = apiReq.body.values;
-    
-    // if(password !== confirmPassword){
-    //     return apiRes.status(400).json({message : "Passwords do not match"})
-    //     alert("Passwords do not match")
-    // }
+    const { username , password , phoneNumber , emailAddress } = apiReq.body.values;
     if( username &&  password && phoneNumber && emailAddress) {
        const hashedPassword = await bcrypt.hash(password , 0)
        const dbResponse = await RegistrationModel.create({
@@ -34,23 +29,37 @@ try {
 
 
 
-// const decodedValue = jwt.verify(token , "mykey")
-
-
 // Login
+// const handleLogin =  async (apiReq, apiRes) => {
+
+//     const {username , password} = apiReq.params
+    
+//     const dbResponse = await RegistrationModel.findOne({
+//         username : username ,
+//         password : password
+//     })
+//    if(dbResponse?._id){
+//     const token = jwt.sign({data : username } , jwtUserkey);
+//     apiRes.json({username : dbResponse.username , token : token})
+//     return
+//    }
+//    apiRes.send("Login failed")
+// };
+
 const handleLogin =  async (apiReq, apiRes) => {
 
     const {username , password} = apiReq.params
-    
+
     const dbResponse = await RegistrationModel.findOne({
-        username : username ,
-        password : password
+        username : username 
     })
-   if(dbResponse?._id){
+   if(dbResponse?.username){
+    const passwordMatch =  bcrypt.compare(password , dbResponse.password)
+    if(passwordMatch){
     const token = jwt.sign({data : username } , jwtUserkey);
     apiRes.json({username : dbResponse.username , token : token})
     return
-   }
+   }}
    apiRes.send("Login failed")
 };
 
