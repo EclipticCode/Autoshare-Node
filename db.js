@@ -1,6 +1,6 @@
 const mongoose = require ('mongoose');
 
-const mongoDbUrl = process.env.MONGO_DB_URL;
+const mongoDbUrl = process.env.mongoDbUrl;
 
 const connectDb = async () => {
    if(mongoose.connection.readyState === 1)
@@ -8,6 +8,7 @@ const connectDb = async () => {
    await mongoose.connect(mongoDbUrl);
 
    console.log(mongoose.connection.readyState , "--- Connection State")
+
 }
 
 module.exports = {
