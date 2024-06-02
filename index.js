@@ -15,10 +15,6 @@ connectDb();
 
 const jwtUserkey = process.env.JWT_USERKEY;
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    next();
-  });
 
 app.get('/', (req,res)=> {
     if(mongoose.connection.readyState === 1) {

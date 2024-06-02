@@ -33,7 +33,7 @@ try {
 const handleLogin =  async (apiReq, apiRes) => {
 
     const {username , password} = apiReq.params
-    
+      console.log(apiReq.params)
     const dbResponse = await RegistrationModel.findOne({
         username : username ,
         password : password
@@ -47,20 +47,24 @@ const handleLogin =  async (apiReq, apiRes) => {
 };
 
 // const handleLogin =  async (apiReq, apiRes) => {
-
 //     try{
-//         const {username , password} = apiReq.params
+//         const { username } = apiReq.params
+//         const password  = apiReq.params.password
+//         console.log(username , "username")
+//         console.log(password , "password")
 
 //     const dbResponse = await RegistrationModel.findOne({
 //         username : username 
 //     })
 //    if(dbResponse?.username){
-//     const passwordMatch =  bcrypt.compare(password , dbResponse.password)
+//     const passwordMatch = await bcrypt.compare(password , dbResponse.password)
+//     console.log(passwordMatch)
 //     if(passwordMatch){
 //     const token = jwt.sign({data : username } , jwtUserkey);
 //     apiRes.json({username : dbResponse.username , token : token})
 //     return
 //    }}
+//    apiRes.send("Login failed")
 //     }
 //     catch(error){
 //         console.error("Error during login")
