@@ -15,6 +15,11 @@ connectDb();
 
 const jwtUserkey = process.env.JWT_USERKEY;
 
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+  });
+
 app.get('/', (req,res)=> {
     if(mongoose.connection.readyState === 1) {
      res.send("Server working and connected to DB");
@@ -41,22 +46,20 @@ const verifyUser = async (username) => {
    return false;
 }
 
-const auth = (req, res, next) => {
+const auth = async (req, res, next) => {
     if(req.headers.auth){
       const userToken = req.headers.auth;
      try{
         const tokenDecoded = jwt.verify(userToken , jwtUserkey)
         const username = tokenDecoded.data;
-        verifyUser(username)
-        .then(response =>{ 
-            if(response){
+        const response = await verifyUser(username)
+           if(response){
                 next();
             }
         else{
             res.send(400)
-        }}
-        )
-     } catch(error){
+        }} 
+        catch(error){
         res.status(400).send("Invalid token");
      }
     } else {  
