@@ -30,43 +30,43 @@ try {
 
 
 // Login
-// const handleLogin =  async (apiReq, apiRes) => {
-
-//     const {username , password} = apiReq.params
-    
-//     const dbResponse = await RegistrationModel.findOne({
-//         username : username ,
-//         password : password
-//     })
-//    if(dbResponse?._id){
-//     const token = jwt.sign({data : username } , jwtUserkey);
-//     apiRes.json({username : dbResponse.username , token : token})
-//     return
-//    }
-//    apiRes.send("Login failed")
-// };
-
 const handleLogin =  async (apiReq, apiRes) => {
 
-    try{
-        const {username , password} = apiReq.params
-
+    const {username , password} = apiReq.params
+    
     const dbResponse = await RegistrationModel.findOne({
-        username : username 
+        username : username ,
+        password : password
     })
-   if(dbResponse?.username){
-    const passwordMatch =  bcrypt.compare(password , dbResponse.password)
-    if(passwordMatch){
+   if(dbResponse?._id){
     const token = jwt.sign({data : username } , jwtUserkey);
     apiRes.json({username : dbResponse.username , token : token})
     return
-   }}
-    }
-    catch(error){
-        console.error("Error during login")
-        apiRes.send("Login failed")
-    }
+   }
+   apiRes.send("Login failed")
 };
+
+// const handleLogin =  async (apiReq, apiRes) => {
+
+//     try{
+//         const {username , password} = apiReq.params
+
+//     const dbResponse = await RegistrationModel.findOne({
+//         username : username 
+//     })
+//    if(dbResponse?.username){
+//     const passwordMatch =  bcrypt.compare(password , dbResponse.password)
+//     if(passwordMatch){
+//     const token = jwt.sign({data : username } , jwtUserkey);
+//     apiRes.json({username : dbResponse.username , token : token})
+//     return
+//    }}
+//     }
+//     catch(error){
+//         console.error("Error during login")
+//         apiRes.send("Login failed")
+//     }
+// };
 
 
 // Booking
