@@ -10,3 +10,4 @@ This backend repository contains the server-side code for the AutoShare car rent
 - `POST /createBooking` - Create a new booking
 - `GET /mybookings` - Fetch all bookings made by a single user
 - `PUT /cancelBooking` - To cancel a booking
+- `GET /bookedCars` - To get all the booked cars

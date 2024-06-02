@@ -31,49 +31,31 @@ try {
 
 // Login
 const handleLogin =  async (apiReq, apiRes) => {
+    try{
+        const { username } = apiReq.params
+        const password  = apiReq.params.password
 
-    const {username , password} = apiReq.params
-      console.log(apiReq.params)
     const dbResponse = await RegistrationModel.findOne({
-        username : username ,
-        password : password
+        username : username 
     })
-   if(dbResponse?._id){
+   if(dbResponse?.username){
+    const passwordMatch = await bcrypt.compare(password , dbResponse.password)
+    if(passwordMatch){
     const token = jwt.sign({data : username } , jwtUserkey);
     apiRes.json({username : dbResponse.username , token : token})
     return
-   }
+   }}
    apiRes.send("Login failed")
+    }
+    catch(error){
+        console.error("Error during login")
+        apiRes.send("Login failed")
+    }
 };
-
-// const handleLogin =  async (apiReq, apiRes) => {
-//     try{
-//         const { username } = apiReq.params
-//         const password  = apiReq.params.password
-//         console.log(username , "username")
-//         console.log(password , "password")
-
-//     const dbResponse = await RegistrationModel.findOne({
-//         username : username 
-//     })
-//    if(dbResponse?.username){
-//     const passwordMatch = await bcrypt.compare(password , dbResponse.password)
-//     console.log(passwordMatch)
-//     if(passwordMatch){
-//     const token = jwt.sign({data : username } , jwtUserkey);
-//     apiRes.json({username : dbResponse.username , token : token})
-//     return
-//    }}
-//    apiRes.send("Login failed")
-//     }
-//     catch(error){
-//         console.error("Error during login")
-//         apiRes.send("Login failed")
-//     }
-// };
 
 
 // Booking
+
 const handleCreateBooking = async (apiReq , apiRes) => {
 
 const { username , id , startDate , endDate , deliveryTime } = apiReq.body;
@@ -129,18 +111,19 @@ const handleCancelBooking = async (apiReq , apiRes) => {
    apiRes.send("Cancellation Failed")
 }
 
-// booked Slots 
-// const handleBookedSlots = async (apiReq , apiRes) => {
+// bookedCars
+const handleBookedCars = async (apiReq , apiRes) => {
    
-//     const { id , selectedEndDate } = apiReq.params;
-
-//     const dbResponse = await BookingModel.find({
-//         carId : id , endDate : selectedEndDate ,
-//     });
-//     if(dbResponse?.length){
-//         apiRes.send(dbResponse)
-//     }
-// }
+  try{
+    const bookings = await BookingModel.find()
+    const bookedCarIds = bookings.map(booking => booking.carId)
+    apiRes.json(bookedCarIds);
+  } 
+  catch(error){
+    console.error("Error fetching booked cars")
+    apiRes.status(500).json({error: "Internal server error"})
+  }
+}
 
 
 module.exports = {
@@ -149,5 +132,5 @@ module.exports = {
   handleCreateBooking,
   handleMyBookings ,
   handleCancelBooking ,
-//   handleBookedSlots
+  handleBookedCars
 };

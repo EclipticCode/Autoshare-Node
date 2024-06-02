@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken')
 const {  RegistrationModel } = require("./schema");
 
 const {connectDb , mongoose} = require('./db')
-const {handleLogin , handleRegistration , handleCreateBooking , handleMyBookings , handleCancelBooking } = require('./service')
+const {handleLogin , handleRegistration , handleCreateBooking , handleMyBookings , handleCancelBooking , handleBookedCars} = require('./service')
 
 app.use(cors());
 app.use(bodyParser.json())
@@ -77,9 +77,9 @@ app.put('/cancelBooking/:username/:bookingId' , auth , (apiReq , apiRes) => {
     handleCancelBooking(apiReq , apiRes)
 })
 
-// app.get('/bookedSlots/:id/:selectedEndDate' , (apiReq , apiRes) => {
-//     handleBookedSlots(apiReq , apiRes)
-// })
+app.get('/bookedCars' , auth , (apiReq , apiRes) => {
+    handleBookedCars(apiReq , apiRes)
+})
 
 
 app.listen(4000 , ()=> {
