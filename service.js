@@ -80,18 +80,23 @@ apiRes.send("Invalid data for booking")
 
 // myBookings
 const handleMyBookings = async (apiReq , apiRes) => {
+  try {
     const {username} = apiReq.params;
 
-   if(username?.length){
-    const dbResponse = await  BookingModel.find({
-        username
-    });
-    if(dbResponse){
-        apiRes.send(dbResponse);
-        return;
+    if(username?.length){
+     const dbResponse = await  BookingModel.find({
+         username
+     });
+     if(dbResponse){
+         apiRes.send(dbResponse);
+         return;
+     }
     }
-   }
-   apiRes.send("Can't fetch details")
+    apiRes.send("Can't fetch details")
+  } catch(error){
+    console.error("Error fetching bookings")
+    apiRes.send("Internal server error")
+  }
 }
 
 // cancel booking
